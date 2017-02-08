@@ -113,6 +113,7 @@ class CApplication
             break;    
 
             case 'taskupdate':
+                CB24Log::Add('TDObject'.print_r($this->TDObject, true));
 
                 $domain = $this->arB24App->getDomain();                
 
@@ -120,7 +121,6 @@ class CApplication
                 $B24task = $B24ItemObject->getData($params['data']['FIELDS_AFTER']['ID']);
 
                 $DBtask = $db->getRow("SELECT * FROM `b24_tasks` WHERE `B_TASK_ID` = {$B24task['ID']} AND `PORTAL` LIKE '{$domain}'"); 
-                CB24Log::Add('DBtask'.print_r($DBtask, true));
 
                 /** No task in DB */
                 if (!$DBtask)
@@ -142,6 +142,7 @@ class CApplication
 	                if (!$active)
 	                {
 	            		$TDtask = $this->TDObject->deactiveTask($DBtask['TD_USER_ID'], $DBtask['TD_TASK_ID'], $B24task['TITLE']);
+                        CB24Log::Add('Task deactivated'.print_r($B24task, true));
 	                	die();
 	                } 
 	                else 
@@ -163,6 +164,7 @@ class CApplication
 	                if (!$TDuser)
 	                {
 	            		$TDtask = $this->TDObject->deactiveTask($DBtask['TD_USER_ID'], $DBtask['TD_TASK_ID'], $B24task['TITLE']);
+                        CB24Log::Add('Task deactivated'.print_r($B24task, true));
 	                	die();
 	                }
                 }
@@ -253,14 +255,12 @@ class CApplication
     	$accessToken = $this->arB24App->getAccessToken();
     	$refreshToken = $this->arB24App->getRefreshToken();
     	$memberId = $this->arB24App->getMemberId();
-        CB24Log::Add('saveAuth - TDObject'.print_r($this->TDObject,true));
 
         if (!empty($this->TDObject->auth) && ($this->TDObject->auth['TD_PROJECT_NAME'] != $TDprojectName) && ($this->TDObject->auth['TD_PROJECT_ID'] != 0))
         {
             $users = $this->TDObject->getUsers();
             $userID = $users[0]->user_id;
             $TDproject = $this->TDObject->editProject($userID, $this->TDObject->auth['TD_PROJECT_ID'], $TDprojectName);
-            CB24Log::Add('saveAuth - TDproject - '.print_r($TDproject,true));
         }
         
         $res = $db->query(
@@ -340,7 +340,9 @@ class CApplication
 	        $TDproject = $this->TDObject->getProjects($TDuser['user_id'], $B24project['NAME']);
 
 			if (!$TDproject)
+            {
 				$TDproject = $this->TDObject->newProject($TDuser['user_id'], $B24project['NAME']);
+            }
 	    }     		
         CB24Log::Add('function - end getProject'); 
 	    return $TDproject;

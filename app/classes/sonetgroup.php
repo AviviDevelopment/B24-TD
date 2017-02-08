@@ -18,7 +18,9 @@ class SonetGroup extends  Bitrix24Entity
 			array(
 				'ORDER' => $ORDER,
 				'FILTER'=> $FILTER,
+				'IS_ADMIN' => 'Y'
 			));
+		
 		if (count($result[result]) == 1)
 			return $result[result][0];
 		else

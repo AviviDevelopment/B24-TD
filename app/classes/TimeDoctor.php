@@ -28,7 +28,8 @@ class TimeDoctor
             	$refresh_token = $arResult['refresh_token'];
             	$portal = $arPortal['PORTAL'];
             	$companyID = $arPortal['TD_COMPANY'];
-                $resSet = $db->query("UPDATE `b24_portal_reg` SET `TD_ACCESS_TOCKEN` = '{$access_token}', `TD_REFRESH_TOCKEN` = '{$refresh_token}', `TD_COMPANY` = {$companyID}  WHERE `PORTAL` LIKE '{$portal}'");
+            	$adminID = $arPortal['TD_ADMIN_ID'];
+                $resSet = $db->query("UPDATE `b24_portal_reg` SET `TD_ACCESS_TOCKEN` = '{$access_token}', `TD_REFRESH_TOCKEN` = '{$refresh_token}', `TD_COMPANY` = {$companyID}, `TD_ADMIN_ID` = {$adminID}  WHERE `PORTAL` LIKE '{$portal}'");
                 // \CB24Log::Add('TD resSet - '.print_r($resSet, true));
                 if (!$resSet)
                 {
@@ -116,9 +117,10 @@ class TimeDoctor
 	public function getWorkLogs($tasks, $offset = 1, $limit = 0)
 	{	
 		$arWorkLogs = array();
+		$startDay = date('Y')."-01-01";
 		$today = date('Y-m-d');
 
-        $tempUrlTD = '/v1.1/companies/'.$this->auth['TD_COMPANY'].'/worklogs?access_token='.$this->auth['TD_ACCESS_TOCKEN'].'&_format=json&start_date='.$today.'&end_date='.$today.'&task_ids='.$tasks.'&offset='.$offset.'&limit='.$limit;
+        $tempUrlTD = '/v1.1/companies/'.$this->auth['TD_COMPANY'].'/worklogs?access_token='.$this->auth['TD_ACCESS_TOCKEN'].'&_format=json&start_date='.$startDay.'&end_date='.$today.'&task_ids='.$tasks.'&offset='.$offset.'&limit='.$limit;
         $arWorkLogs = $this->curlRequestSingle($tempUrlTD);
 
         return $arWorkLogs;
@@ -168,8 +170,11 @@ class TimeDoctor
      */
 	public function newProject($userID, $projectName)
 	{
-        $tempUrlTD = '/v1.1/companies/'.$this->auth['TD_COMPANY'].'/users/'.$userID.'/projects?access_token='.$this->auth['TD_ACCESS_TOCKEN'].'&_format=json';
-        $projectFields = array('project' => array('project_name' => $projectName));
+        $tempUrlTD = '/v1.1/companies/'.$this->auth['TD_COMPANY'].'/users/'.$this->auth['TD_ADMIN_ID'].'/projects?access_token='.$this->auth['TD_ACCESS_TOCKEN'].'&_format=json';
+        $projectFields = array(
+        	'assign_users' => '{$userID}',
+        	'project' => array('project_name' => $projectName)
+        	);
         $projectTd = $this->curlRequestSingle($tempUrlTD, 'POST', $projectFields);
 
 		return $projectTd;

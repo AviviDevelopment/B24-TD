@@ -79,6 +79,23 @@ class ElapsedItem extends Bitrix24Entity
 			));
 		return $result;
 	}
+	
+	/**
+	 * Returns an entry about elapsed time by its identifier.
+	 * @see http://www.bitrixsoft.com/rest_help/tasks/task/elapseditem/get.php
+	 * @param $taskId integer Task identifier. Required parameter.
+	 * @param $elapsedItemId integer Entry identifier. Required parameter.
+	 * @return array
+	 */
+	public function getById($taskId, $elapsedItemId)
+	{
+		$result = $this->client->call('task.elapseditem.get',
+			array(
+				'TASKID' => $taskId,
+				'ITEMID' => $elapsedItemId
+			));
+		return $result;
+	}
 
 	/**
 	 * Add time spent to the task. Return added record ID.

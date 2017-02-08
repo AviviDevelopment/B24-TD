@@ -50,10 +50,12 @@ if ($_GET['portal'])
             $tempUrlTD = "/v1.1/companies?access_token={$tokens['access_token']}";
             $accounts = TimeDoctor\TimeDoctor::curlRequestSingle($tempUrlTD);
             $companyID = $accounts['accounts'][0]->company_id;
+            $adminID = $accounts['accounts'][0]->user_id;
 
             $arPortal['TD_ACCESS_TOCKEN']  = $tokens['access_token'];
             $arPortal['TD_REFRESH_TOCKEN'] = $tokens['refresh_token'];
             $arPortal['TD_COMPANY']  = $companyID;
+            $arPortal['TD_ADMIN_ID']  = $adminID;
 
             $td_error = '';
             $TDObject = new TimeDoctor\TimeDoctor($arPortal, $td_error);
@@ -78,7 +80,7 @@ if ($_GET['portal'])
             {
                 $access_token = $TDObject->auth['TD_ACCESS_TOCKEN'];
                 $refresh_token = $TDObject->auth['TD_REFRESH_TOCKEN'];
-                $res = $db->query("UPDATE `b24_portal_reg` SET `TD_ACCESS_TOCKEN` = '{$access_token}', `TD_REFRESH_TOCKEN` = '{$refresh_token}', `TD_COMPANY` = {$companyID}, `TD_PROJECT_ID` = {$projectID} WHERE `PORTAL` LIKE '{$b24PortalAddress}'");
+                $res = $db->query("UPDATE `b24_portal_reg` SET `TD_ACCESS_TOCKEN` = '{$access_token}', `TD_REFRESH_TOCKEN` = '{$refresh_token}', `TD_COMPANY` = {$companyID}, `TD_PROJECT_ID` = {$projectID}, `TD_ADMIN_ID` = {$adminID} WHERE `PORTAL` LIKE '{$b24PortalAddress}'");
                 if ($res)
                     CB24Log::Add("Auth saved!");
                 header("Location: https://webapi.timedoctor.com/app");

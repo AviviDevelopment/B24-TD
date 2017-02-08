@@ -103,9 +103,14 @@ class CUpdateTasksTime
 					$arPortalTask = $arPortalTasks[$arWorklog["task_id"]];
 					if($arPortalTask["B24_TIME_RECORD_ID"])
 					{
-						$recordData = array();
-						$recordData = $B24ElapsedTime->update($arPortalTask["B_TASK_ID"], $arPortalTask["B24_TIME_RECORD_ID"], 
-							array("SECONDS" => $arWorklog["length"], "COMMENT_TEXT" => $this->defaultComment, "CREATED_DATE" => $currTime));
+						$existRecord = array();
+						$existRecord = $B24ElapsedTime->getById($arPortalTask["B_TASK_ID"], $arPortalTask["B24_TIME_RECORD_ID"]);
+						if($existRecord["SECONDS"] != $arWorklog["length"])
+						{
+							$recordData = array();
+							$recordData = $B24ElapsedTime->update($arPortalTask["B_TASK_ID"], $arPortalTask["B24_TIME_RECORD_ID"], 
+								array("SECONDS" => $arWorklog["length"], "COMMENT_TEXT" => $this->defaultComment, "CREATED_DATE" => $currTime));
+						}
 					}
 					else
 					{
