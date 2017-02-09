@@ -107,7 +107,6 @@ class CUpdateTasksTime
 						$existRecord = $B24ElapsedTime->getById($arPortalTask["B_TASK_ID"], $arPortalTask["B24_TIME_RECORD_ID"]);
 						if($existRecord["result"]["SECONDS"] != $arWorklog["length"])
 						{
-						file_put_contents($_SERVER["DOCUMENT_ROOT"]."/txt.txt", $existRecord["result"]["SECONDS"]." - ".$arWorklog["length"].PHP_EOL , FILE_APPEND);
 							$recordData = array();
 							$recordData = $B24ElapsedTime->update($arPortalTask["B_TASK_ID"], $arPortalTask["B24_TIME_RECORD_ID"], 
 								array("SECONDS" => $arWorklog["length"], "COMMENT_TEXT" => $this->defaultComment, "CREATED_DATE" => $currTime));
